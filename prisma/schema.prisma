@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:Koikoika2@localhost:5432/maktaba?schema=public"
+}
+
+model gadgets {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @db.VarChar(30)
+  description String  @db.VarChar(400)
+  user_id     String  @db.Uuid
+  users       users   @relation(fields: [user_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  files       files[]
+  links       links[]
+  tags        tags[]
+}
+
+model users {
+  id              String            @id @default(uuid()) @db.Uuid
+  username        String            @db.VarChar(30)
+  email           String            @unique @db.VarChar(30)
+  password        String            @db.VarChar(30)
+  gadgets         gadgets[]
+  profilepictures profilepictures[]
+}
+
+model files {
+  id        String  @id @default(uuid()) @db.Uuid
+  gadget_id String  @db.Uuid
+  gadgets   gadgets @relation(fields: [gadget_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+model links {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String  @db.VarChar(30)
+  url       String  @db.VarChar(30)
+  gadget_id String  @db.Uuid
+  gadgets   gadgets @relation(fields: [gadget_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+model tags {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String  @db.VarChar(30)
+  gadget_id String  @db.Uuid
+  gadgets   gadgets @relation(fields: [gadget_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+model profilepictures {
+  id      String @id @default(uuid()) @db.Uuid
+  user_id String @db.Uuid
+  users   users  @relation(fields: [user_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
