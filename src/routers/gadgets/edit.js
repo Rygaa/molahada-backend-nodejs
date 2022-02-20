@@ -82,11 +82,6 @@ router.post('/add-tags', auth, async (request, response) => {
         message: 'Connected',
         data: { gadget: GADGET },
     })
-
-
-
-
-
 })
 
 
@@ -110,7 +105,13 @@ router.post('/remove-tag', auth, async (request, response) => {
 })
 
 router.post('/remove-gadget', auth, async (request, response) => {
+    console.log(request.body)
     const tags = await prisma.tags.findMany({
+        where: {
+            gadget_id: request.body.gadgetId
+        }
+    })
+    const links = await prisma.links.findMany({
         where: {
             gadget_id: request.body.gadgetId
         }
@@ -120,6 +121,14 @@ router.post('/remove-gadget', auth, async (request, response) => {
         await prisma.tags.delete({
             where: {
                 id: tags[i].id,
+            }
+        })
+    }
+
+    for (let i = 0; i < links.length; i++) {
+        await prisma.links.delete({
+            where: {
+                id: links[i].id,
             }
         })
     }
@@ -141,5 +150,68 @@ router.post('/remove-gadget', auth, async (request, response) => {
 
 
 
+
+router.post('/add-links', auth, async (request, response) => {
+    const { newLinks } = request.body;
+    console.log(newLinks)
+
+    const gadget = await prisma.gadgets.findUnique({
+        where: {
+            id: request.body.gadgetId
+        },
+    })
+
+    for (let i = 0; i < newLinks.length; i++) {
+        await prisma.links.create({
+            data: {
+                name: newLinks[i].name,
+                url: newLinks[i].url,
+                gadget_id: gadget.id,
+            }
+        })
+    }
+    const tags = await prisma.tags.findMany({
+        where: {
+            gadget_id: gadget.id
+        }
+    })
+
+    const links = await prisma.links.findMany({
+        where: {
+            gadget_id: request.body.gadgetId
+        },
+    })
+
+    const GADGET = {
+        ...gadget,
+        tags: tags,
+        links: links,
+    }
+
+    response.send({
+        status: 'success',
+        message: 'Connected',
+        data: { gadget: GADGET },
+    })
+})
+
+
+router.post('/remove-link', auth, async (request, response) => {
+    const tag = await prisma.links.findFirst({
+        where: {
+            id: request.body.link,
+        }
+    })
+    await prisma.links.delete({
+        where: {
+            id: tag.id,
+        }
+    })
+
+    response.send({
+        status: 'success',
+        message: 'Connected',
+    })
+})
 
 module.exports = router;

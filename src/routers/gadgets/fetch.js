@@ -57,9 +57,16 @@ router.post('/gadget/:name', auth, async (request, response) => {
         }
     })
 
+    const links = await prisma.links.findMany({
+        where: {
+            gadget_id: gadget.id
+        }
+    })
+
     const GADGET = {
         ...gadget,
         tags: tags,
+        links: links,
     }
 
     response.send({
