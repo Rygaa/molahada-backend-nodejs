@@ -52,7 +52,7 @@ router.post('/gadget/:name', auth, async (request, response) => {
     })
 
     const tags = await prisma.tags.findMany({
-        where: {
+        where: { 
             gadget_id: gadget.id
         }
     })
