@@ -23,6 +23,13 @@ app.use(fetch)
 app.use(update)
 app.use(profilePP)
 
+app.get('/test', async (request, response) => {
+    response.status(200).json({
+        "message": "Working",
+    });
+})
+
+
 app.get('/getUsers', async (request, response) => {
     const dbRes = await to(pool.query('SELECT * FROM users ORDER BY id ASC'));
     if (dbRes[0]) {
