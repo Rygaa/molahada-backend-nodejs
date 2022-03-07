@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const app = express();
-const PORT = 4005;
+const PORT = 3009;
 app.use(express.json())
 app.use(cors())
 const { pool } = require('./src/database/pg.js')

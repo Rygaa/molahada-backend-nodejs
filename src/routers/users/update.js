@@ -37,6 +37,8 @@ router.post('/update-profile', upload.single("picture"), auth, async (request, r
         data
     })
 
+    console.log(request.file)
+
     if (request.file) {
         await fsPromises.writeFile(`${__dirname}/../../images/${user.id}.png`, request.file.buffer)
     }
